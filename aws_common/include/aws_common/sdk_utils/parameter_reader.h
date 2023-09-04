@@ -162,7 +162,7 @@ public:
    * @return AWS_ERR_OK if read was successful, AWS_ERR_NOT_FOUND if the parameter was not found
    * @note if the return code is not AWS_ERR_OK, out remains unchanged.
    */
-  virtual AwsError ReadParam(const ParameterPath & param_path, Aws::String & out) const = 0;
+  virtual AwsError ReadParamEx(const ParameterPath & param_path, Aws::String & out) const = 0;
 
   /**
    * read a string from the provided parameter name
