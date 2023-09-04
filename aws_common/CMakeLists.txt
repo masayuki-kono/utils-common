@@ -15,17 +15,10 @@ else()
     add_definitions(-DCMAKE_ROS_VERSION="1")
 endif()
 
-include(GNUInstallDirs)
-if(NOT EXTERNAL_INSTALL_LOCATION)
-  set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external)
-endif()
-
-## Add AWS SDK libraries
-set(SERVICE "core" "logs" "monitoring" "s3" "kinesis" "iot" "lex" "polly")
-foreach(_service ${SERVICE})
+set(SERVICE_COMPONENTS core logs monitoring s3 kinesis iot lex polly)
+foreach(_service ${SERVICE_COMPONENTS})
   list(APPEND ${PROJECT_NAME}_IMPORTED_LIBRARIES "aws-cpp-sdk-${_service}")
 endforeach()
-add_subdirectory(awssdk)
 
 include_directories(include)
 ## Declare a C++ library
@@ -36,20 +29,6 @@ add_library(${PROJECT_NAME} SHARED
   src/sdk_utils/logging/aws_log_system.cpp
   src/sdk_utils/auth/service_credentials_provider.cpp
   src/fs_utils/wordexp_ros.cpp)
-add_dependencies(${PROJECT_NAME} AWS_SDK_IMPORT)
-
-foreach(_imported_lib ${${PROJECT_NAME}_IMPORTED_LIBRARIES})
-  if(NOT TARGET ${_imported_lib})
-    add_library(${_imported_lib} UNKNOWN IMPORTED)
-    set_target_properties(${_imported_lib} PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "${EXTERNAL_INSTALL_LOCATION}/include")
-    set_target_properties(${_imported_lib} PROPERTIES
-      IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-      IMPORTED_LOCATION "${EXTERNAL_INSTALL_LOCATION}/${CMAKE_INSTALL_LIBDIR}/lib${_imported_lib}.so")
-    set_property(TARGET ${_imported_lib} APPEND PROPERTY
-      IMPORTED_CONFIGURATIONS RELEASE)
-  endif()
-endforeach()
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_IMPORTED_LIBRARIES})
@@ -126,7 +105,6 @@ CONFIGURE_FILE(${PROJECT_NAME}Config.cmake.in
   ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake @ONLY)
 CONFIGURE_FILE(${PROJECT_NAME}ConfigVersion.cmake.in
   ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake @ONLY)
-INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/external/${CMAKE_INSTALL_LIBDIR}/cmake/AWSSDK/ DESTINATION share/${PROJECT_NAME}/cmake)
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/cmake/DefineTestMacros.cmake DESTINATION share/${PROJECT_NAME}/cmake)
 INSTALL(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake DESTINATION share/${PROJECT_NAME}/cmake)
 INSTALL(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake DESTINATION share/${PROJECT_NAME}/cmake)
