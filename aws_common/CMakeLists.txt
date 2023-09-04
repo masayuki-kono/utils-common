@@ -3,7 +3,10 @@ project(aws_common)
 
 SET(AWS_COMMON_VERSION 1.0.0)
 
-add_compile_options(-std=c++11)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
 if (DEFINED ENV{ROS_DISTRO})
     add_definitions(-DCMAKE_ROS_DISTRO="$ENV{ROS_DISTRO}")
 else()
