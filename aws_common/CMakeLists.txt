@@ -35,7 +35,7 @@ add_library(${PROJECT_NAME} SHARED
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_IMPORTED_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${AWSSDK_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -66,7 +66,6 @@ set(LIBS_FOR_TESTS
 
 set(HEADERS_FOR_TESTS
   ${aws_common_INCLUDE_DIRS}
-  ${AWSSDK_INCLUDE_DIR}
 )
 
 macro(link_test_target target_name)
