@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(aws_common)
-
 SET(AWS_COMMON_VERSION 1.0.0)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -19,12 +18,10 @@ else()
 endif()
 
 set(SERVICE_COMPONENTS core logs monitoring s3 kinesis iot lex polly)
-foreach(_service ${SERVICE_COMPONENTS})
-  list(APPEND ${PROJECT_NAME}_IMPORTED_LIBRARIES "aws-cpp-sdk-${_service}")
-endforeach()
+
+find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
 
 include_directories(include)
-## Declare a C++ library
 add_library(${PROJECT_NAME} SHARED
   src/sdk_utils/parameter_path.cpp
   src/sdk_utils/aws_profile_provider.cpp
@@ -34,8 +31,8 @@ add_library(${PROJECT_NAME} SHARED
   src/fs_utils/wordexp_ros.cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_IMPORTED_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE)
+target_link_libraries(${PROJECT_NAME} ${AWSSDK_LINK_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${AWSSDK_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
