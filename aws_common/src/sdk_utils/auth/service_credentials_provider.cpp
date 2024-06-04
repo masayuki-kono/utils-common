@@ -51,9 +51,10 @@ static const char * AWS_LOG_TAG = "ServiceCredentialsProviderChain";
 /// Go ahead and try to refresh credentials 30s before expiration
 static const double EXPIRATION_GRACE_BUFFER = 30.0;
 
-
-namespace Aws {
-namespace Auth {
+namespace Aws
+{
+namespace Auth
+{
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -64,11 +65,11 @@ template <typename T>
 static bool SetCurlOpt(CURL * curl, CURLoption opt, T lvalue);
 static bool AppendHeader(struct curl_slist ** headers, const char * name, const char * value);
 static bool IsIotConfigValid(const IotRoleConfig & config);
-static bool ParseConfigVale(std::string & value, Aws::String & result);
+static bool ParseConfigValue(std::string & value, Aws::String & result);
 static bool ParseConfigValue(std::string & value, int32_t & result);
 template <typename T>
-static bool GetConfigValue(std::map<std::string, std::string> & data, const char * name, T & result,
-                           bool optional = false);
+static bool GetConfigValue(
+  std::map<std::string, std::string> & data, const char * name, T & result, bool optional = false);
 
 /**
  * \brief Helper to set a libcurl option or log an error if a problem occurred
@@ -168,8 +169,8 @@ static bool ParseConfigValue(std::string & value, int32_t & result)
  * @return True if the value was successfully retrieved
  */
 template <typename T>
-static bool GetConfigValue(std::map<std::string, std::string> & data, const char * name, T & result,
-                           bool optional)
+static bool GetConfigValue(
+  std::map<std::string, std::string> & data, const char * name, T & result, bool optional)
 {
   auto it = data.find(name);
   if (it != data.end()) {
@@ -193,8 +194,9 @@ static bool GetConfigValue(std::map<std::string, std::string> & data, const char
  * @see ServiceAuthConfig
  * @see ParameterReaderInterface
  */
-bool GetServiceAuthConfig(ServiceAuthConfig & config,
-                          const std::shared_ptr<Aws::Client::ParameterReaderInterface>& parameters)
+bool GetServiceAuthConfig(
+  ServiceAuthConfig & config,
+  const std::shared_ptr<Aws::Client::ParameterReaderInterface> & parameters)
 {
   bool failed = false;
   Aws::String cafile, certfile, keyfile, host, role, name;
@@ -205,21 +207,35 @@ bool GetServiceAuthConfig(ServiceAuthConfig & config,
   if (parameters->ReadParam(Aws::Client::ParameterPath("iot"), data) != AWS_ERR_OK) {
     failed = true;
   } else {
-    if (!GetConfigValue(data, CFG_CAFILE, cafile)) { failed = true; }
-    if (!GetConfigValue(data, CFG_CERTFILE, certfile)) { failed = true; }
-    if (!GetConfigValue(data, CFG_KEYFILE, keyfile)) { failed = true; }
-    if (!GetConfigValue(data, CFG_ENDPOINT, host)) { failed = true; }
-    if (!GetConfigValue(data, CFG_ROLE, role)) { failed = true; }
-    if (!GetConfigValue(data, CFG_THING_NAME, name)) { failed = true; }
+    if (!GetConfigValue(data, CFG_CAFILE, cafile)) {
+      failed = true;
+    }
+    if (!GetConfigValue(data, CFG_CERTFILE, certfile)) {
+      failed = true;
+    }
+    if (!GetConfigValue(data, CFG_KEYFILE, keyfile)) {
+      failed = true;
+    }
+    if (!GetConfigValue(data, CFG_ENDPOINT, host)) {
+      failed = true;
+    }
+    if (!GetConfigValue(data, CFG_ROLE, role)) {
+      failed = true;
+    }
+    if (!GetConfigValue(data, CFG_THING_NAME, name)) {
+      failed = true;
+    }
 
     if (!GetConfigValue(data, CFG_CONNECT_TIMEOUT_MS, connect_timeout_ms, true)) {
-      AWS_LOG_INFO(AWS_LOG_TAG, "Could not find config value %s, using default %d",
-                   CFG_CONNECT_TIMEOUT_MS, DEFAULT_AUTH_CONNECT_TIMEOUT_MS);
+      AWS_LOG_INFO(
+        AWS_LOG_TAG, "Could not find config value %s, using default %d", CFG_CONNECT_TIMEOUT_MS,
+        DEFAULT_AUTH_CONNECT_TIMEOUT_MS);
     }
 
     if (!GetConfigValue(data, CFG_TOTAL_TIMEOUT_MS, total_timeout_ms, true)) {
-      AWS_LOG_INFO(AWS_LOG_TAG, "Could not find config value %s, using default %d",
-                   CFG_TOTAL_TIMEOUT_MS, DEFAULT_AUTH_TOTAL_TIMEOUT_MS);
+      AWS_LOG_INFO(
+        AWS_LOG_TAG, "Could not find config value %s, using default %d", CFG_TOTAL_TIMEOUT_MS,
+        DEFAULT_AUTH_TOTAL_TIMEOUT_MS);
     }
   }
 
@@ -233,17 +249,18 @@ bool GetServiceAuthConfig(ServiceAuthConfig & config,
     config.iot.connect_timeout_ms = connect_timeout_ms;
     config.iot.total_timeout_ms = total_timeout_ms;
 
-    AWS_LOG_INFO(AWS_LOG_TAG,
-                 "IoT provider config: ca=%s,cert=%s,key=%s,ep=%s,role=%s,thing_name=%s,"
-                 "connect_timeout=%d,total_timeout=%d",
-                 config.iot.cafile.c_str(), config.iot.certfile.c_str(), config.iot.keyfile.c_str(),
-                 config.iot.host.c_str(), config.iot.role.c_str(), config.iot.name.c_str(),
-                 config.iot.connect_timeout_ms, config.iot.total_timeout_ms);
+    AWS_LOG_INFO(
+      AWS_LOG_TAG,
+      "IoT provider config: ca=%s,cert=%s,key=%s,ep=%s,role=%s,thing_name=%s,"
+      "connect_timeout=%d,total_timeout=%d",
+      config.iot.cafile.c_str(), config.iot.certfile.c_str(), config.iot.keyfile.c_str(),
+      config.iot.host.c_str(), config.iot.role.c_str(), config.iot.name.c_str(),
+      config.iot.connect_timeout_ms, config.iot.total_timeout_ms);
     return true;
   }
 
-  AWS_LOG_INFO(AWS_LOG_TAG,
-               "Missing or incomplete 'iot' parameters, skipping IoT credential provider");
+  AWS_LOG_INFO(
+    AWS_LOG_TAG, "Missing or incomplete 'iot' parameters, skipping IoT credential provider");
   return false;
 }
 
@@ -278,16 +295,16 @@ public:
    * @param userdata Context pointer, which happens to be an instance of RequestContext
    * @return Zero if an error occurs, otherwise nmemb
    */
-  static size_t WriteData(char * ptr, size_t  /*size*/, size_t nmemb, void * userdata)
+  static size_t WriteData(char * ptr, size_t /*size*/, size_t nmemb, void * userdata)
   {
     auto * ctx = static_cast<RequestContext *>(userdata);
     size_t current = ctx->stream_.tellp();
 
     // Returning less than nmemb to curl indicates an error
     if ((current + nmemb) > MAX_IOT_CREDENTIAL_BYTES) {
-      AWS_LOG_ERROR(AWS_LOG_TAG,
-                    "IoT response was too large, current:%d bytes, read:%d bytes, max:%d bytes",
-                    current, nmemb, MAX_IOT_CREDENTIAL_BYTES);
+      AWS_LOG_ERROR(
+        AWS_LOG_TAG, "IoT response was too large, current:%d bytes, read:%d bytes, max:%d bytes",
+        current, nmemb, MAX_IOT_CREDENTIAL_BYTES);
       return 0;
     }
 
@@ -299,10 +316,7 @@ public:
    * \brief Create a Json::JsonValue object from the current value of the buffer
    * @return An instance of Json::JsonValue containing the contents of the buffer
    */
-  Aws::Utils::Json::JsonValue GetValue()
-  {
-    return Aws::Utils::Json::JsonValue(stream_.str()); 
-  }
+  Aws::Utils::Json::JsonValue GetValue() { return Aws::Utils::Json::JsonValue(stream_.str()); }
 
 private:
   /// Current data that has be received so far
@@ -315,10 +329,14 @@ private:
 //
 
 IotRoleCredentialsProvider::IotRoleCredentialsProvider(const IotRoleConfig & config)
-  : cached_("", ""), config_(config), expiry_(0.0)
+: cached_("", ""), config_(config), expiry_(0.0)
 {
-  if (config_.connect_timeout_ms <= 0) { config_.connect_timeout_ms = DEFAULT_AUTH_CONNECT_TIMEOUT_MS; }
-  if (config_.total_timeout_ms <= 0) { config_.total_timeout_ms = DEFAULT_AUTH_TOTAL_TIMEOUT_MS; }
+  if (config_.connect_timeout_ms <= 0) {
+    config_.connect_timeout_ms = DEFAULT_AUTH_CONNECT_TIMEOUT_MS;
+  }
+  if (config_.total_timeout_ms <= 0) {
+    config_.total_timeout_ms = DEFAULT_AUTH_TOTAL_TIMEOUT_MS;
+  }
 }
 
 IotRoleCredentialsProvider::~IotRoleCredentialsProvider() = default;
@@ -340,13 +358,11 @@ AWSCredentials IotRoleCredentialsProvider::GetAWSCredentials()
 bool IotRoleCredentialsProvider::IsTimeExpired()
 {
   // 30s grace buffer so requests have time to finish before expiry.
-  return Aws::Utils::DateTime::Now().SecondsWithMSPrecision() > (expiry_.load() - EXPIRATION_GRACE_BUFFER);
+  return Aws::Utils::DateTime::Now().SecondsWithMSPrecision() >
+         (expiry_.load() - EXPIRATION_GRACE_BUFFER);
 }
 
-void IotRoleCredentialsProvider::SetCredentials(AWSCredentials & creds_obj)
-{
-  cached_ = creds_obj;
-}
+void IotRoleCredentialsProvider::SetCredentials(AWSCredentials & creds_obj) { cached_ = creds_obj; }
 
 /**
  * Validates a JsonValue response from an IoT credentials endpoint. Ensuring
@@ -362,22 +378,25 @@ bool IotRoleCredentialsProvider::ValidateResponse(Aws::Utils::Json::JsonValue & 
 
   auto value_view = value.View();
   if (!value_view.ValueExists(FIELD_CREDENTIALS)) {
-    AWS_LOG_ERROR(AWS_LOG_TAG, "Unable to find %s field in AWS IoT credential provider response",
-                  FIELD_CREDENTIALS);
+    AWS_LOG_ERROR(
+      AWS_LOG_TAG, "Unable to find %s field in AWS IoT credential provider response",
+      FIELD_CREDENTIALS);
     return false;
   }
 
   auto creds = value_view.GetObject(FIELD_CREDENTIALS);
 
   if (!creds.IsObject()) {
-    AWS_LOG_ERROR(AWS_LOG_TAG, "Expected object for %s in AWS IoT credential provider response",
-                  FIELD_CREDENTIALS);
+    AWS_LOG_ERROR(
+      AWS_LOG_TAG, "Expected object for %s in AWS IoT credential provider response",
+      FIELD_CREDENTIALS);
     return false;
   }
 
   if (!creds.ValueExists(FIELD_EXPIRATION)) {
-    AWS_LOG_ERROR(AWS_LOG_TAG, "Unable to find %s field in AWS IoT credential provider response",
-                  FIELD_EXPIRATION)
+    AWS_LOG_ERROR(
+      AWS_LOG_TAG, "Unable to find %s field in AWS IoT credential provider response",
+      FIELD_EXPIRATION)
     return false;
   }
 
@@ -418,10 +437,13 @@ void IotRoleCredentialsProvider::Refresh()
   AWS_LOG_INFO(AWS_LOG_TAG, "Retrieving IOT credentials!");
 
   std::lock_guard<std::mutex> lock(creds_mutex_);
-  if (!IsTimeExpired()) { return; }
+  if (!IsTimeExpired()) {
+    return;
+  }
 
   // Make at most 1 tps for new creds, we also have a 30s grace buffer
-  expiry_.store(Aws::Utils::DateTime::Now().SecondsWithMSPrecision() + EXPIRATION_GRACE_BUFFER + 1.0);
+  expiry_.store(
+    Aws::Utils::DateTime::Now().SecondsWithMSPrecision() + EXPIRATION_GRACE_BUFFER + 1.0);
 
   curl = curl_easy_init();
   if (curl == nullptr) {
@@ -431,35 +453,71 @@ void IotRoleCredentialsProvider::Refresh()
     url_stream << "https://" << config_.host << "/role-aliases/" << config_.role << "/credentials";
 
     // Setup SSL options
-    if (!SetCurlOpt(curl, CURLOPT_SSL_VERIFYPEER, 1L)) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_SSL_VERIFYHOST, 2L)) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_HTTPGET, 1L)) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_HEADER, 0L)) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_CONNECTTIMEOUT_MS, config_.connect_timeout_ms)) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_TIMEOUT_MS, config_.total_timeout_ms)) { goto cleanup_curl; }
+    if (!SetCurlOpt(curl, CURLOPT_SSL_VERIFYPEER, 1L)) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_SSL_VERIFYHOST, 2L)) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_HTTPGET, 1L)) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_HEADER, 0L)) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_CONNECTTIMEOUT_MS, config_.connect_timeout_ms)) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_TIMEOUT_MS, config_.total_timeout_ms)) {
+      goto cleanup_curl;
+    }
 
-    if (!SetCurlOpt(curl, CURLOPT_URL, url_stream.str().c_str())) { goto cleanup_curl; }
+    if (!SetCurlOpt(curl, CURLOPT_URL, url_stream.str().c_str())) {
+      goto cleanup_curl;
+    }
 
     // Configure client auth
-    if (!SetCurlOpt(curl, CURLOPT_CAINFO, config_.cafile.c_str())) { goto cleanup_curl; }
+    if (!SetCurlOpt(curl, CURLOPT_CAINFO, config_.cafile.c_str())) {
+      goto cleanup_curl;
+    }
 
-    if (!SetCurlOpt(curl, CURLOPT_SSLCERTTYPE, "PEM")) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_SSLCERT, config_.certfile.c_str())) { goto cleanup_curl; }
+    if (!SetCurlOpt(curl, CURLOPT_SSLCERTTYPE, "PEM")) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_SSLCERT, config_.certfile.c_str())) {
+      goto cleanup_curl;
+    }
 
-    if (!SetCurlOpt(curl, CURLOPT_SSLKEYTYPE, "PEM")) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_SSLKEY, config_.keyfile.c_str())) { goto cleanup_curl; }
+    if (!SetCurlOpt(curl, CURLOPT_SSLKEYTYPE, "PEM")) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_SSLKEY, config_.keyfile.c_str())) {
+      goto cleanup_curl;
+    }
 
     // Setup response handler
     RequestContext ctx;
-    if (!SetCurlOpt(curl, CURLOPT_WRITEFUNCTION, &RequestContext::WriteData)) { goto cleanup_curl; }
-    if (!SetCurlOpt(curl, CURLOPT_WRITEDATA, &ctx)) { goto cleanup_curl; }
+    if (!SetCurlOpt(curl, CURLOPT_WRITEFUNCTION, &RequestContext::WriteData)) {
+      goto cleanup_curl;
+    }
+    if (!SetCurlOpt(curl, CURLOPT_WRITEDATA, &ctx)) {
+      goto cleanup_curl;
+    }
 
     // Setup request headers
-    if (!AppendHeader(&headers, "Accept", "application/json")) { goto cleanup_curl; }
-    if (!AppendHeader(&headers, "Host", config_.host.c_str())) { goto cleanup_curl; }
-    if (!AppendHeader(&headers, HEADER_THING_NAME, config_.name.c_str())) { goto cleanup_curl; }
+    if (!AppendHeader(&headers, "Accept", "application/json")) {
+      goto cleanup_curl;
+    }
+    if (!AppendHeader(&headers, "Host", config_.host.c_str())) {
+      goto cleanup_curl;
+    }
+    if (!AppendHeader(&headers, HEADER_THING_NAME, config_.name.c_str())) {
+      goto cleanup_curl;
+    }
 
-    if (!SetCurlOpt(curl, CURLOPT_HTTPHEADER, headers)) { goto cleanup_curl; }
+    if (!SetCurlOpt(curl, CURLOPT_HTTPHEADER, headers)) {
+      goto cleanup_curl;
+    }
 
     // Make the request
     res = curl_easy_perform(curl);
@@ -470,7 +528,9 @@ void IotRoleCredentialsProvider::Refresh()
 
     // Parse JSON response
     auto value = ctx.GetValue();
-    if (!ValidateResponse(value)) { goto cleanup_curl; }
+    if (!ValidateResponse(value)) {
+      goto cleanup_curl;
+    }
 
     auto creds_obj = value.View().GetObject(FIELD_CREDENTIALS);
 
@@ -482,8 +542,8 @@ void IotRoleCredentialsProvider::Refresh()
       AWS_LOG_ERROR(AWS_LOG_TAG, "Unable to parse expiration: %s", expires_str.c_str());
       goto cleanup_curl;
     }
-    AWS_LOG_INFO(AWS_LOG_TAG, "Retrieved AWS creds from IoT, next expiration %s",
-                 expires_str.c_str());
+    AWS_LOG_INFO(
+      AWS_LOG_TAG, "Retrieved AWS creds from IoT, next expiration %s", expires_str.c_str());
 
     cached_.SetAWSAccessKeyId(creds_obj.GetString(FIELD_ACCESS_KEY));
     cached_.SetAWSSecretKey(creds_obj.GetString(FIELD_SECRET_KEY));
