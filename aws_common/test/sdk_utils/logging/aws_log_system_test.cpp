@@ -42,6 +42,8 @@ public:
    * Overidden log methods to test *
    *********************************/
 
+  void vaLog(LogLevel logLevel, const char * tag, const char * formatStr, va_list args) override {}
+
   void LogInfo(const char * tag, const std::string & message) override
   {
     log_info_count_++;
