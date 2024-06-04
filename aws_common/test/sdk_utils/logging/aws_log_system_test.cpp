@@ -42,6 +42,8 @@ public:
    * Overidden log methods to test *
    *********************************/
 
+  void vaLog(LogLevel logLevel, const char * tag, const char * formatStr, va_list args) override {}
+
   void LogInfo(const char * tag, const std::string & message) override
   {
     log_info_count_++;
@@ -128,8 +130,8 @@ public:
     return class_under_test->log_fatal_count_;
   }
 
-  static void SetExpectedLogMessageString(ClassUnderTest * class_under_test,
-                                          const std::string & message)
+  static void SetExpectedLogMessageString(
+    ClassUnderTest * class_under_test, const std::string & message)
   {
     class_under_test->expected_log_message_string_ = message;
   }
@@ -148,9 +150,8 @@ public:
     class_under_test->log_error_count_ = 0;
     class_under_test->log_fatal_count_ = 0;
   }
-  
-  void Flush() override {
-  }
+
+  void Flush() override {}
 };
 
 TEST(TestAWSLogSystem, TestLogMethod)
@@ -162,44 +163,44 @@ TEST(TestAWSLogSystem, TestLogMethod)
   // Test if info log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Info, "info_tag", "[%d] fake info log message", 1);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "info_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[1] fake info log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[1] fake info log message");
   EXPECT_EQ(ClassUnderTest::GetLogInfoCount(logger), 1);
 
   // Test if debug log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Debug, "debug_tag", "[%d] fake debug log message", 2);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "debug_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[2] fake debug log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[2] fake debug log message");
   EXPECT_EQ(ClassUnderTest::GetLogDebugCount(logger), 1);
 
   // Test if warn log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Warn, "warn_tag", "[%d] fake warn log message", 3);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "warn_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[3] fake warn log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[3] fake warn log message");
   EXPECT_EQ(ClassUnderTest::GetLogWarnCount(logger), 1);
 
   // Test if error log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Error, "error_tag", "[%d] fake error log message", 4);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "error_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[4] fake error log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[4] fake error log message");
   EXPECT_EQ(ClassUnderTest::GetLogErrorCount(logger), 1);
 
   // Test if fatal log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Fatal, "fatal_tag", "[%d] fake fatal log message", 5);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "fatal_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[5] fake fatal log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[5] fake fatal log message");
   EXPECT_EQ(ClassUnderTest::GetLogFatalCount(logger), 1);
 
   // Test if debug log function is correctly getting called second time with appropriate log
   // message.
   logger->Log(Aws::Utils::Logging::LogLevel::Debug, "debug_tag", "[%d] fake debug log message", 6);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "debug_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[6] fake debug log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[6] fake debug log message");
   EXPECT_EQ(ClassUnderTest::GetLogDebugCount(logger), 2);
 
   delete logger;
@@ -223,15 +224,15 @@ TEST(TestAWSLogSystem, TestLogMethod)
   // Test if error log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Error, "error_tag", "[%d] fake error log message", 3);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "error_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[3] fake error log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[3] fake error log message");
   EXPECT_EQ(ClassUnderTest::GetLogErrorCount(logger), 1);
 
   // Test if fatal log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Fatal, "fatal_tag", "[%d] fake fatal log message", 4);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "fatal_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[4] fake fatal log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[4] fake fatal log message");
   EXPECT_EQ(ClassUnderTest::GetLogFatalCount(logger), 1);
 
   delete logger;
@@ -243,36 +244,36 @@ TEST(TestAWSLogSystem, TestLogMethod)
   // Test if info log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Info, "info_tag", "[%d] fake info log message", 1);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "info_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), 
-              "[1] fake info log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[1] fake info log message");
   EXPECT_EQ(ClassUnderTest::GetLogInfoCount(logger), 1);
 
   // Test if debug log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Debug, "debug_tag", "[%d] fake debug log message", 2);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "debug_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), 
-                "[2] fake debug log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[2] fake debug log message");
   EXPECT_EQ(ClassUnderTest::GetLogDebugCount(logger), 1);
 
   // Test if error log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Error, "error_tag", "[%d] fake error log message", 3);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "error_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[3] fake error log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[3] fake error log message");
   EXPECT_EQ(ClassUnderTest::GetLogErrorCount(logger), 1);
 
   // Test if fatal log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Fatal, "fatal_tag", "[%d] fake fatal log message", 4);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "fatal_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[4] fake fatal log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[4] fake fatal log message");
   EXPECT_EQ(ClassUnderTest::GetLogFatalCount(logger), 1);
 
   // Test if trace log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Trace, "trace_tag", "[%d] fake trace log message", 5);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "trace_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[5] fake trace log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[5] fake trace log message");
   EXPECT_EQ(ClassUnderTest::GetLogTraceCount(logger), 1);
 }
 
@@ -288,15 +289,17 @@ TEST(TestAWSLogSystem, TestLogStreamMethod)
   message_stream << "This is a first info log message.";
   logger->LogStream(Aws::Utils::Logging::LogLevel::Info, "info_tag", message_stream);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "info_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "This is a first info log message.");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
+    "This is a first info log message.");
   EXPECT_EQ(ClassUnderTest::GetLogInfoCount(logger), 1);
 
   message_stream << " This is a second info log message.";
   logger->LogStream(Aws::Utils::Logging::LogLevel::Info, "info_tag", message_stream);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "info_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "This is a first info log message. This is a second info log message.");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
+    "This is a first info log message. This is a second info log message.");
   EXPECT_EQ(ClassUnderTest::GetLogInfoCount(logger), 2);
 
   delete logger;
@@ -327,8 +330,9 @@ TEST(TestAWSLogSystem, TestLogStreamMethod)
   message_stream << "This is a first error log message.";
   logger->LogStream(Aws::Utils::Logging::LogLevel::Error, "error_tag", message_stream);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "error_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "This is a first error log message.");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
+    "This is a first error log message.");
   EXPECT_EQ(ClassUnderTest::GetLogErrorCount(logger), 1);
 
   delete logger;
@@ -346,8 +350,8 @@ TEST(TestAWSLogSystem, TestChangingLogLevels)
   // Test if info log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Info, "info_tag", "[%d] fake info log message", 1);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "info_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[1] fake info log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[1] fake info log message");
   EXPECT_EQ(ClassUnderTest::GetLogInfoCount(logger), 1);
 
   // reset test variables
@@ -370,8 +374,8 @@ TEST(TestAWSLogSystem, TestChangingLogLevels)
   // Test if fatal log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Fatal, "fatal_tag", "[%d] fake fatal log message", 1);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "fatal_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[1] fake fatal log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[1] fake fatal log message");
   EXPECT_EQ(ClassUnderTest::GetLogFatalCount(logger), 1);
 
   // reset test variables
@@ -388,8 +392,8 @@ TEST(TestAWSLogSystem, TestChangingLogLevels)
   // Test if info log function is correctly getting called with correct log message.
   logger->Log(Aws::Utils::Logging::LogLevel::Info, "info_tag", "[%d] fake info log message", 3);
   EXPECT_STREQ(ClassUnderTest::GetExpectedTag(logger).c_str(), "info_tag");
-  EXPECT_STREQ(ClassUnderTest::GetExpectedLogMessageString(logger).c_str(),
-               "[3] fake info log message");
+  EXPECT_STREQ(
+    ClassUnderTest::GetExpectedLogMessageString(logger).c_str(), "[3] fake info log message");
   EXPECT_EQ(ClassUnderTest::GetLogInfoCount(logger), 1);
 
   delete logger;
